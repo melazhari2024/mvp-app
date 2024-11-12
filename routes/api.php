@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::post('register', [\App\Http\Controllers\Auth\UserController::class, 'register']);
-Route::post('get-user', [\App\Http\Controllers\Auth\UserController::class, 'getUser']);
+Route::post('get-user-token', [\App\Http\Controllers\Auth\UserController::class, 'getUserToken']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('loans', [LoanController::class, 'store']);

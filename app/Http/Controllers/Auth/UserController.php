@@ -27,15 +27,13 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $token = $user->createToken('auth-token', [$request->roles])->plainTextToken;
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user,
-            'token' => $token,
         ], 201);
     }
 
-    public function getUser(Request $request)
+    public function getUserToken(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -52,7 +50,8 @@ class UserController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ], 400);
         }
-        $token = $request->user()->currentAccessToken();
+        $user->tokens()->delete();
+        $token = $user->createToken('auth-token', [$request->roles ?? '"abilities:none'])->plainTextToken;
         return response()->json([
             'token' => $token
         ]);

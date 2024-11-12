@@ -31,7 +31,7 @@ class Loan extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'amount', 'interest_rate', 'duration', 'created_at', 'updated_at'
+        'user_id', 'amount', 'interest_rate', 'duration', 'created_at', 'updated_at', 'borrower_user_id'
     ];
 
     /**
