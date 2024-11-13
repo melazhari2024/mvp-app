@@ -131,9 +131,7 @@
                 },
                 "required": [
                     "message",
-                    "code",
-                    "statusCode",
-                    "href"
+                    "code"
                 ],
                 "type": "object"
             },
