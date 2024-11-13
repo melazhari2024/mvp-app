@@ -124,22 +124,9 @@
                         "description": "The HTTP status code returned.",
                         "type": "integer"
                     },
-                    "details": {
-                        "description": "Any additional details about the error message.",
-                        "nullable": true,
-                        "type": "object"
-                    },
-                    "href": {
-                        "description": "The URL to documentation about the error code.",
-                        "type": "string"
-                    },
                     "message": {
                         "description": "The error message.",
                         "type": "string"
-                    },
-                    "statusCode": {
-                        "description": "The Ably error code.",
-                        "type": "integer"
                     }
                 },
                 "required": [
