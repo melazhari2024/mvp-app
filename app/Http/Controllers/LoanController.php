@@ -121,7 +121,7 @@ class LoanController extends Controller
             if (!$loan) {
                 return response()->json(['message' => 'Loan not found'], 404);
             }
-            if ($user->tokenCan(self::UNAUTHORIZED_ACTION_MESSAGE)) {
+            if ($user->tokenCan('abilities:loan-create,loan-update,loan-delete')) {
                 $loan->delete();
                 return response()->json(['message' => 'Loan deleted successfully']);
             } else {
