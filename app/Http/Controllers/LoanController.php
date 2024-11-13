@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use Illuminate\Http\Request;
+use PHPUnit\Event\Code\Throwable;
 
 class LoanController extends Controller
 {
     const UNAUTHORIZED_ACTION_MESSAGE = 'User unauthorized to perform this action.';
+
     /**
      *
      */
@@ -22,26 +24,29 @@ class LoanController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'amount' => 'required|numeric|min:1',
-            'interest_rate' => 'required|numeric|min:0',
-            'duration' => 'required|integer|min:1',
-            'borrower_user_id' => 'required|numeric|exists:users,id'
-        ]);
-        $user = auth()->user();
-        if ($user->tokenCan('abilities:loan-create,loan-update,loan-delete')) {
-            $loan = Loan::create([
-                'user_id' => $user->id,
-                'amount' => $request->amount,
-                'interest_rate' => $request->interest_rate,
-                'duration' => $request->duration,
-                'borrower_user_id' => $request->borrower_user_id
+        try {
+            $request->validate([
+                'amount' => 'required|numeric|min:1',
+                'interest_rate' => 'required|numeric|min:0',
+                'duration' => 'required|integer|min:1',
+                'borrower_user_id' => 'required|numeric|exists:users,id'
             ]);
-            return response()->json($loan, 201);
-        } else {
-            return response()->json(['message' => self::UNAUTHORIZED_ACTION_MESSAGE], 400);
+            $user = auth()->user();
+            if ($user->tokenCan('abilities:loan-create,loan-update,loan-delete')) {
+                $loan = Loan::create([
+                    'user_id' => $user->id,
+                    'amount' => $request->amount,
+                    'interest_rate' => $request->interest_rate,
+                    'duration' => $request->duration,
+                    'borrower_user_id' => $request->borrower_user_id
+                ]);
+                return response()->json($loan, 201);
+            } else {
+                return response()->json(['message' => self::UNAUTHORIZED_ACTION_MESSAGE], 400);
+            }
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
     }
 
     /**
@@ -75,30 +80,32 @@ class LoanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = auth()->user();
-        $loan = $user->loans()->find($id);
+        try {
+            $user = auth()->user();
+            $loan = $user->loans()->find($id);
 
-        if (!$loan) {
-            return response()->json(['message' => 'Loan not found'], 404);
-        }
+            if (!$loan) {
+                return response()->json(['message' => 'Loan not found'], 404);
+            }
 
-        $request->validate([
-            'amount' => 'required|numeric|min:1',
-            'interest_rate' => 'required|numeric|min:0',
-            'duration' => 'required|integer|min:1',
-        ]);
-        if ($user->tokenCan('abilities:loan-create,loan-update,loan-delete')) {
-            $loan->update([
-                'amount' => $request->amount,
-                'interest_rate' => $request->interest_rate,
-                'duration' => $request->duration,
+            $request->validate([
+                'amount' => 'required|numeric|min:1',
+                'interest_rate' => 'required|numeric|min:0',
+                'duration' => 'required|integer|min:1',
             ]);
-            return response()->json($loan);
-        } else {
-            return response()->json(['message' => self::UNAUTHORIZED_ACTION_MESSAGE], 400);
+            if ($user->tokenCan('abilities:loan-create,loan-update,loan-delete')) {
+                $loan->update([
+                    'amount' => $request->amount,
+                    'interest_rate' => $request->interest_rate,
+                    'duration' => $request->duration,
+                ]);
+                return response()->json($loan);
+            } else {
+                return response()->json(['message' => self::UNAUTHORIZED_ACTION_MESSAGE], 400);
+            }
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
-
     }
 
     /**
@@ -107,18 +114,21 @@ class LoanController extends Controller
      */
     public function destroy($id)
     {
-        $user = auth()->user();
-        $loan = $user->loans()->find($id);
+        try {
+            $user = auth()->user();
+            $loan = $user->loans()->find($id);
 
-        if (!$loan) {
-            return response()->json(['message' => 'Loan not found'], 404);
+            if (!$loan) {
+                return response()->json(['message' => 'Loan not found'], 404);
+            }
+            if ($user->tokenCan(self::UNAUTHORIZED_ACTION_MESSAGE)) {
+                $loan->delete();
+                return response()->json(['message' => 'Loan deleted successfully']);
+            } else {
+                return response()->json(['message' => self::UNAUTHORIZED_ACTION_MESSAGE], 400);
+            }
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-        if ($user->tokenCan(self::UNAUTHORIZED_ACTION_MESSAGE)) {
-            $loan->delete();
-            return response()->json(['message' => 'Loan deleted successfully']);
-        } else {
-            return response()->json(['message' => self::UNAUTHORIZED_ACTION_MESSAGE], 400);
-        }
-
     }
 }

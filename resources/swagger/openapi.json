@@ -1,0 +1,222 @@
+{
+    "openapi": "3.0.1",
+    "servers": [
+        {
+            "url": "https://control.ably.net/v1"
+        }
+    ],
+    "info": {
+        "contact": {
+            "x-twitter": "melazhari"
+        },
+        "description": "MVP APP api documentation",
+        "title": "Control API v1",
+        "version": "1.0.14",
+        "x-apisguru-categories": [
+            "cloud"
+        ],
+        "x-logo": {
+            "url": "https://api.apis.guru/v2/cache/logo/https_twitter.com_ablyrealtime_profile_image"
+        },
+        "x-origin": [
+            {
+                "format": "openapi",
+                "url": "https://raw.githubusercontent.com/ably/open-specs/main/definitions/control-v1.yaml",
+                "version": "3.0"
+            }
+        ],
+        "x-providerName": "ably.net",
+        "x-serviceName": "control"
+    },
+    "paths": {
+        "/loans": {
+            "post": {
+                "description": "Create a loan.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/loan_post"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/loan_response"
+                                }
+                            }
+                        },
+                        "description": "App created"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        },
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        },
+                        "description": "Authentication failed"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        },
+                        "description": "Account not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        },
+                        "description": "Invalid request"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        },
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_auth": []
+                    }
+                ],
+                "summary": "Creates a Loan",
+                "tags": [
+                    "loans"
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "error": {
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "description": "The HTTP status code returned.",
+                        "type": "integer"
+                    },
+                    "details": {
+                        "description": "Any additional details about the error message.",
+                        "nullable": true,
+                        "type": "object"
+                    },
+                    "href": {
+                        "description": "The URL to documentation about the error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "statusCode": {
+                        "description": "The Ably error code.",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "message",
+                    "code",
+                    "statusCode",
+                    "href"
+                ],
+                "type": "object"
+            },
+            "loan_post": {
+                "additionalProperties": false,
+                "properties": {
+                    "amount": {
+                        "description": "The Loan Amount.",
+                        "nullable": false,
+                        "type": "number"
+                    },
+                    "interest_rate": {
+                        "description": "The interest rate",
+                        "nullable": false,
+                        "type": "number"
+                    },
+                    "duration": {
+                        "description": "The duration of the loan",
+                        "nullable": false,
+                        "type": "number"
+                    },
+                    "borrower_user_id": {
+                        "description": "The borrower user id",
+                        "example": 1,
+                        "nullable": false,
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "type": "object"
+            },
+            "loan_response": {
+                "additionalProperties": false,
+                "properties": {
+                    "user_id": {
+                        "description": "The borrower user id",
+                        "nullable": false,
+                        "type": "integer"
+                    },
+                    "amount": {
+                        "description": "The loan amount",
+                        "example": "12.12",
+                        "type": "number"
+                    },
+                    "interest_rate": {
+                        "description": "The loan interest rate",
+                        "example": "6.6",
+                        "nullable": false,
+                        "type": "number"
+                    },
+                    "duration": {
+                        "description": "The loan duration",
+                        "example": "12",
+                        "type": "integer"
+                    },
+                    "borrower_user_id": {
+                        "description": "The borrower user id",
+                        "example": "1",
+                        "type": "integer"
+                    },
+                    "id": {
+                        "description": "The loan id",
+                        "example": "1",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
